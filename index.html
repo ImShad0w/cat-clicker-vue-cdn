@@ -16,6 +16,16 @@
       @click="increment(currCat)"
     />
   </div>
+  <button @click="toggleAdmin">Admin</button>
+  <div v-if="showAdmin">
+    <form @submit.prevent="saveCat">
+      <input v-model="tempCat.name" />
+      <input v-model.number="tempCat.count" type="number" />
+      <input v-model="tempCat.image" />
+      <button type="submit">Save</button>
+      <button type="button" @click="toggleAdmin">Cancel</button>
+    </form>
+  </div>
 </div>
 
 <script>
@@ -25,11 +35,15 @@
     setup() {
       const cats = ref([
         { image: "./xuxa_the_kitten.jpg", name: "Xuxa", count: 0 },
-        { image: "./fluffy_cat.jpg", name: "FLuffy", count: 0 },
+        { image: "./fluffy_cat.jpg", name: "Fluffy", count: 0 },
         { image: "./browny.jpg", name: "Browny", count: 0 },
         { image: "./grayish.jpg", name: "Grayish", count: 0 },
         { image: "./oreo.jpg", name: "Oreo", count: 0 },
       ]);
+
+      const tempCat = ref({});
+      const currIndex = ref(null);
+      const showAdmin = ref(false);
 
       const currCat = ref(null);
 
@@ -38,10 +52,34 @@
       }
 
       function showCat(index) {
+        currIndex.value = index;
         currCat.value = cats.value[index];
+        //Make a copy for the tempCat to be able to edit in the future
+        tempCat.value = { ...cats.value[index] };
       }
 
-      return { cats, currCat, showCat, increment };
+      function toggleAdmin() {
+        showAdmin.value = !showAdmin.value;
+      }
+      function saveCat() {
+        if (!currCat.value) return;
+        //Update the cat inside of the array
+        cats.value[currIndex.value] = { ...tempCat.value };
+        //Also update the currentCat with the new value
+        currCat.value = cats.value[currIndex.value];
+        showAdmin.value = false;
+      }
+
+      return {
+        cats,
+        currCat,
+        showCat,
+        increment,
+        showAdmin,
+        toggleAdmin,
+        saveCat,
+        tempCat,
+      };
     },
   }).mount("#app");
 </script>
