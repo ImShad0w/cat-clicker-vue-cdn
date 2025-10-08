@@ -1,0 +1,52 @@
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<div id="app">
+  <ul class="cats-list">
+    <li v-for="(cat, index) in cats" :key="index">
+      <p @click="showCat(index)">{{ cat.name }}</p>
+    </li>
+  </ul>
+
+  <div v-if="currCat" class="showCat">
+    <p>Name: {{ currCat.name }}</p>
+    <p>Count: {{ currCat.count }}</p>
+    <img
+      class="img"
+      :src="currCat.image"
+      :alt="currCat.name"
+      @click="increment(currCat)"
+    />
+  </div>
+</div>
+
+<script>
+  const { createApp, ref } = Vue;
+
+  createApp({
+    setup() {
+      const cats = ref([
+        { image: "./xuxa_the_kitten.jpg", name: "Xuxa", count: 0 },
+        { image: "./fluffy_cat.jpg", name: "FLuffy", count: 0 },
+        { image: "./browny.jpg", name: "Browny", count: 0 },
+        { image: "./grayish.jpg", name: "Grayish", count: 0 },
+        { image: "./oreo.jpg", name: "Oreo", count: 0 },
+      ]);
+
+      const currCat = ref(null);
+
+      function increment(cat) {
+        cat.count++;
+      }
+
+      function showCat(index) {
+        currCat.value = cats.value[index];
+      }
+
+      return { cats, currCat, showCat, increment };
+    },
+  }).mount("#app");
+</script>
+<style>
+  .img {
+    width: 150px;
+  }
+</style>
